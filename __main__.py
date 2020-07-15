@@ -13,18 +13,19 @@ if not upstream_rel_url:
     )
 
 
-def transformer(server, line_generator):
+def transformer(server, upstream, line_generator):
     """DRY."""
     from_to_complete = {
         "<title>testssl.sh</title>": (
             "<title>audit - tls - %s</title>"
-            '<style>body {background-color: #333333; color: #dddddd;} a {color: cyan;} .corporate {font-family: "ITC Franklin Gothic Std Bk Cd", Verdana, Arial, sans-serif;}</style>'
+            "<style>body {background-color: #333333; color: #dddddd;} a {color: cyan;}"
+            ' .some-font {font-family: "ITC Franklin Gothic Std Bk Cd", Verdana, Arial, sans-serif;}</style>'
         )
         % (server,),
         "<pre>": (
-            '<p class="corporate">... <a href="/audit/tls/">back to index</a></p>\n'
-            "<pre>"
-        ),
+            '<p class="some-font">... <a href="%s">back to index</a></p>\n' "<pre>"
+        )
+        % (upstream,),
     }
 
     from_to_partial = {
@@ -56,7 +57,7 @@ def main(argv=None):
 
     server = argv[0].strip()
 
-    for line in transformer(server, sys.stdin):
+    for line in transformer(server, upstream_rel_url, sys.stdin):
         sys.stdout.write(f"{line}\n")
 
     return 0
